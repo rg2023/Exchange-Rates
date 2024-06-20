@@ -27,7 +27,11 @@ function CurrencySelector({ baseCurrency, setBaseCurrency, currencies, setCurren
                     <div className="card p-4 shadow-sm rounded">
                         <form>
                             <div className="form-group">
-                                <select value={baseCurrency} onChange={(e) => setBaseCurrency(e.target.value)} className="form-control">
+                                <select
+                                    value={baseCurrency}
+                                    onChange={(e) => setBaseCurrency(e.target.value)}
+                                    className="form-select"
+                                >
                                     {currencies.map((currency) => (
                                         <option key={currency} value={currency}>
                                             {currency}

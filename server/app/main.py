@@ -8,7 +8,7 @@ app = FastAPI()
 # CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Update to your local frontend origin
+    allow_origins=["*"],  # Update to your local frontend origin
     allow_credentials=True,
     allow_methods=["GET"],
     allow_headers=["*"],
@@ -16,6 +16,12 @@ app.add_middleware(
 
 # Sample currency data (can be moved to a database or managed differently)
 currency_data = ["USD", "EUR", "GBP", "CNY", "ILS"]
+
+
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
 
 # Endpoint to fetch supported currencies
 @app.get("/currencies/", response_model=List[str])
