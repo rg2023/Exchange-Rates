@@ -4,7 +4,7 @@ import ExchangeRateTable from './exchangeTable';
 import './App.css';
 
 function App() {
-const [baseCurrency, setBaseCurrency] = useState('USD');
+const [baseCurrency, setBaseCurrency] = useState('');
 const [currencies, setCurrencies] = useState([]);
 
 return (
