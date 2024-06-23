@@ -22,7 +22,6 @@ function ExchangeRateTable({ baseCurrency, currencies }) {
     }, [baseCurrency]);
 
     return (
-        baseCurrency && (
         <div className="container mt-4">
             <table className="table table-striped table-bordered">
                 <thead className="thead-dark">
@@ -43,7 +42,6 @@ function ExchangeRateTable({ baseCurrency, currencies }) {
                 </tbody>
             </table>
         </div>
-     )
     );
 }
 
