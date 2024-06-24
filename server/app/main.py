@@ -17,12 +17,6 @@ app.add_middleware(
 # Sample currency data (can be moved to a database or managed differently)
 currency_data = ["USD", "EUR", "GBP", "CNY", "ILS"]
 
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
 # Endpoint to fetch supported currencies
 @app.get("/currencies/", response_model=List[str])
 def get_currencies():
@@ -31,7 +25,7 @@ def get_currencies():
 @app.get("/exchange-rates/{baseCurrency}", response_model=List[Dict[str, Any]])
 async def get_exchange_rates(baseCurrency: str):
     try:
-        api_key = "5dfbca71be4233e7d8bc8f90"
+        api_key = "4e61cf72d3ae31c331eeed6a"
         url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{baseCurrency}"
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
@@ -46,4 +40,5 @@ async def get_exchange_rates(baseCurrency: str):
             else:
                 raise HTTPException(status_code=response.status_code, detail="Failed to fetch exchange rates")
     except Exception as e:
+        print(f"Error fetching exchange rates: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
