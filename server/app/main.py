@@ -5,19 +5,19 @@ import httpx
 
 app = FastAPI()
 
-# CORS middleware configuration
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update to your local frontend origin
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["GET"],
     allow_headers=["*"],
 )
 
-# Sample currency data (can be moved to a database or managed differently)
+
 currency_data = ["USD", "EUR", "GBP", "CNY", "ILS"]
 
-# Endpoint to fetch supported currencies
+
 @app.get("/currencies/", response_model=List[str])
 def get_currencies():
     return currency_data
