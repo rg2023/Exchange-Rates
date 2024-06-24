@@ -36,7 +36,7 @@ function ExchangeRateTable({ baseCurrency }) {
         accessorKey: 'baseCurrency',
         header: 'Base Currency',
         enableSorting: false,
-        cell: () => <p>{baseCurrency}</p>, // השתמש במשתנה `baseCurrency` ישירות
+        cell: () => <p>{baseCurrency}</p>, 
       },
       {
         accessorKey: 'currency',
@@ -51,7 +51,7 @@ function ExchangeRateTable({ baseCurrency }) {
         cell: info => <p>{info.getValue().toFixed(2)}</p>
       }
     ],
-    [baseCurrency] // הוסף תלות ב-baseCurrency כדי לרענן את העמודות אם משתנה
+    [baseCurrency] 
   );
 
   const table = useReactTable({
