@@ -35,39 +35,38 @@ resource "google_artifact_registry_repository" "artifact" {
 #     latest_revision = true
 #   }
 # }
-resource "google_service_account" "sa_cloud_run_server" {
-  account_id   = "cloud-run-executor-server"
-  display_name = "SA for running Cloud Run"
-}
-resource "google_project_iam_member" "sa_server" {
-  role   = "roles/artifactregistry.reader" 
-  member = "serviceAccount:${google_service_account.sa_cloud_run_server.email}"
-  project = var.project_id
-}
+# resource "google_service_account" "sa_cloud_run_server" {
+#   account_id   = "cloud-run-executor-server"
+#   display_name = "SA for running Cloud Run"
+# }
+# resource "google_project_iam_member" "sa_server" {
+#   role   = "roles/artifactregistry.reader" 
+#   member = "serviceAccount:${google_service_account.sa_cloud_run_server.email}"
+#   project = var.project_id
+# }
 
 
 
 
-resource "google_service_account" "sa_cloud_run_client" {
-  account_id   = "cloud-run-executor-client"
-  display_name = "SA for running Cloud Run"
-}
-resource "google_cloud_run_service_iam_member" "sa_frontend" {
-  location = var.region
-  service  = google_cloud_run_service.cloud_run_frontend.name
-  role     = "roles/run.invoker"
-  member   = "user:rachelge-aaaa@sandboxgcp.cloud"
-}
+# resource "google_service_account" "sa_cloud_run_client" {
+#   account_id   = "cloud-run-executor-client"
+#   display_name = "SA for running Cloud Run"
+# }
+# resource "google_cloud_run_service_iam_member" "sa_frontend" {
+#   location = var.region
+#   service  = google_cloud_run_service.cloud_run_frontend.name
+#   role     = "roles/run.invoker"
+#   member   = "user:rachelge-aaaa@sandboxgcp.cloud"
+# }
 
-# גישה ל־frontend להריץ את backend
-resource "google_cloud_run_service_iam_member" "backend_allow_frontend" {
-  location = google_cloud_run_service.cloud_run_server.location
-  service  = google_cloud_run_service.cloud_run_server.name
-  role     = "roles/run.invoker"
-
-  # זה הסרוויס אקאונט של הפרונט
-   member = "serviceAccount:${google_service_account.sa_cloud_run_client.email}"
-}
+# # גישה ל־frontend להריץ את backend
+# resource "google_cloud_run_service_iam_member" "backend_allow_frontend" {
+#   location = google_cloud_run_service.cloud_run_server.location
+#   service  = google_cloud_run_service.cloud_run_server.name
+#   role     = "roles/run.invoker"
+#   # זה הסרוויס אקאונט של הפרונט
+#    member = "serviceAccount:${google_service_account.sa_cloud_run_client.email}"
+# }
 # resource "google_cloud_run_service" "cloud_run_frontend" {
 #   name     = "cloud-run-frontend"
 #   location = var.region
@@ -93,38 +92,55 @@ resource "google_cloud_run_service_iam_member" "backend_allow_frontend" {
 #   }
 # }
 
+# resource "google_cloudbuild_trigger" "backend_trigger" {
+#   name     = "backend-trigger"
+#   filename = "cloudbuild.yaml"
+
+#   github {
+#     owner = "rg2023"
+#     name  = "Exchange-Rates"
+
+#     push {
+#       branch = "^master$"
+#     }
+#   }
+
+#   included_files = ["server/**"]
+
+#   substitutions = {
+#     _SERVICE_NAME = "backend"
+#   }
+# }
+resource "google_service_account" "cloudbuild_sa" {
+  account_id   = "cloudbuild-sa"
+  display_name = "Cloud Build SA for Exchange Rates"
+}
+resource "google_project_iam_member" "cloudbuild_sa_token_creator" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+  member = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+
+}
+resource "google_service_account_iam_member" "allow_cloudbuild_impersonate" {
+  service_account_id = google_service_account.cloudbuild_sa.name
+  role               = "roles/iam.serviceAccountUser"
+  member = "serviceAccount:${data.google_project.current.number}@cloudbuild.gserviceaccount.com"
+}
+
 resource "google_cloudbuild_trigger" "frontend_trigger" {
   name     = "frontend-trigger"
   filename = "cloudbuild.yaml"
+  service_account = google_service_account.cloudbuild_sa.email
+  github {
+    owner = "rg2023"
+    name  = "Exchange-Rates"
 
-  trigger_template {
-    project_id  = var.project_id
-    repo_name   = "Exchange-Rates"
-    branch_name = "master"
-  }
-
-  included_files = ["client/**"]
-
-  substitutions = {
-    _SERVICE_NAME = "frontend"
+    push {
+      branch = "^master$"
+    }
   }
 }
-resource "google_cloudbuild_trigger" "backend_trigger" {
-  name     = "backend-trigger"
-  filename = "cloudbuild.yaml"
 
-  trigger_template {
-    project_id  = var.project_id
-    repo_name   = "Exchange-Rates"
-    branch_name = "main"
-  }
-
-  included_files = ["server/**"]
-
-  substitutions = {
-    _SERVICE_NAME = "backend"
-  }
-}
 
 #==============================================================================לואוד באלאנסר בשביל הקלאוד רן
 # resource "google_compute_region_network_endpoint_group" "cloud_run_neg" {

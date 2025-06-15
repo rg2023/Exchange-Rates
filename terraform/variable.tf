@@ -19,6 +19,9 @@ variable "required_apis" {
     "run.googleapis.com",
     "artifactregistry.googleapis.com",
     "cloudresourcemanager.googleapis.com",
-    # "cloudbuild.googleapis.com"
+    "cloudbuild.googleapis.com"
   ]
+}
+data "google_project" "current" {
+  project_id = var.project_id
 }
