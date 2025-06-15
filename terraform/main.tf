@@ -99,8 +99,8 @@ resource "google_cloudbuild_trigger" "frontend_trigger" {
 
   trigger_template {
     project_id  = var.project_id
-    repo_name   = google_sourcerepo_repository.my_repo.name
-    branch_name = "main"
+    repo_name   = "Exchange-Rates"
+    branch_name = "master"
   }
 
   included_files = ["client/**"]
@@ -115,7 +115,7 @@ resource "google_cloudbuild_trigger" "backend_trigger" {
 
   trigger_template {
     project_id  = var.project_id
-    repo_name   = google_sourcerepo_repository.my_repo.name
+    repo_name   = "Exchange-Rates"
     branch_name = "main"
   }
 
