@@ -1,0 +1,9 @@
+# Ignore Terraform state and provider binaries
+.terraform/
+*.tfstate
+*.tfstate.*
+*.exe
+*.x5
+*.zip
+*.bak
+*.log
