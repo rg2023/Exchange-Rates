@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+ 
+
+
 
 function CurrencySelector({ baseCurrency, setBaseCurrency, currencies, setCurrencies }) {
+    const backend_url = import.meta.env.VITE_BACKEND_URL;
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch('http://localhost:8000/currencies');
+                const response = await fetch(`${backend_url}/currencies`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }

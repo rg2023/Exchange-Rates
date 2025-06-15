@@ -1,0 +1,55 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-key.json
+
+before_script:
+  - echo "$GCP_SA_KEY" > $GOOGLE_APPLICATION_CREDENTIALS
+  - gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+  - gcloud config set project $PROJECT_ID
+  - gcloud auth configure-docker
+# ---------- FRONTEND ----------
+build_front:
+  stage: build
+  script:
+    - cd client/my-app
+    - docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker push gcr.io/$PROJECT_ID/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA
+  rules:
+    - changes:
+        - client/**
+
+deploy_front:
+  stage: deploy
+  script:
+    - gcloud run deploy $SERVICE_NAME \
+        --image gcr.io/$PROJECT_ID/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA \
+        --region $REGION \
+        --platform managed \
+        --quiet
+  rules:
+    - changes:
+        - client/**
+ # ---------- BACKEND ----------
+build_backend:
+  stage: build
+  script:
+    - cd server
+    - docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker push gcr.io/$PROJECT_ID/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA
+  rules:
+    - changes:
+        - server/**
+deploy_backend:
+  stage: deploy
+  script:
+    - gcloud run deploy $SERVICE_NAME \
+        --image gcr.io/$PROJECT_ID/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA \
+        --region $REGION \
+        --platform managed \
+        --quiet
+  rules:
+    - changes:
+        - server/**

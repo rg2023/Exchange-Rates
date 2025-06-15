@@ -1,0 +1,38 @@
+stages:
+  - init
+  - plan
+  - deploy
+
+variables:
+  PROJECT_ID: sandbox-lz-rachelge
+  REGION: me-west1
+  GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-key.json
+
+before_script:
+  - echo "$GCP_SA_KEY" > $GOOGLE_APPLICATION_CREDENTIALS
+  - gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+  - gcloud config set project $PROJECT_ID
+
+init:
+  stage: init
+  script:
+    - terraform init
+  rules:
+    - changes:
+        - terraform/**
+plan:
+  stage: plan
+  script:
+    - terraform plan
+  rules:
+    - changes:
+        - terraform/**
+deploy:
+  stage: deploy
+  script:
+    - terraform apply 
+  rules:
+    - changes:
+        - terraform/**
+
+

@@ -1,0 +1,117 @@
+# options:
+#   logging: CLOUD_LOGGING_ONLY
+
+# substitutions:
+#   _REGION: "me-west1"
+#   _FRONT_SERVICE: "frontend"
+#   _BACK_SERVICE: "backend"
+
+# steps:
+#   # ---------- FRONTEND ----------
+#   - name: "gcr.io/cloud-builders/docker"
+#     dir: "client/my-app"
+#     args: ["build", "-t", "gcr.io/$PROJECT_ID/${_FRONT_SERVICE}:$SHORT_SHA", "."]
+  
+#   - name: "gcr.io/cloud-builders/docker"
+#     args: ["push", "gcr.io/$PROJECT_ID/${_FRONT_SERVICE}:$SHORT_SHA"]
+
+#   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+#     args:
+#       - gcloud
+#       - run
+#       - deploy
+#       - ${_FRONT_SERVICE}
+#       - --image=gcr.io/$PROJECT_ID/${_FRONT_SERVICE}:$SHORT_SHA
+#       - --region=${_REGION}
+#       - --platform=managed
+#       - --quiet
+
+#   # ---------- BACKEND ----------
+#   - name: "gcr.io/cloud-builders/docker"
+#     dir: "server"
+#     args: ["build", "-t", "gcr.io/$PROJECT_ID/${_BACK_SERVICE}:$SHORT_SHA", "."]
+
+#   - name: "gcr.io/cloud-builders/docker"
+#     args: ["push", "gcr.io/$PROJECT_ID/${_BACK_SERVICE}:$SHORT_SHA"]
+
+#   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+#     args:
+#       - gcloud
+#       - run
+#       - deploy
+#       - ${_BACK_SERVICE}
+#       - --image=gcr.io/$PROJECT_ID/${_BACK_SERVICE}:$SHORT_SHA
+#       - --region=${_REGION}
+#       - --platform=managed
+#       - --quiet
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _REGION: "me-west1"
+  _SERVICE_NAME: ""
+
+steps:
+  # ---------- FRONTEND ----------
+  - name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        if [[ "$_SERVICE_NAME" == "frontend" ]]; then
+          docker build -t gcr.io/$PROJECT_ID/frontend:$SHORT_SHA client/my-app
+        fi
+
+  - name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        if [[ "$_SERVICE_NAME" == "frontend" ]]; then
+          docker push gcr.io/$PROJECT_ID/frontend:$SHORT_SHA
+        fi
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        if [[ "$_SERVICE_NAME" == "frontend" ]]; then
+          gcloud run deploy frontend \
+            --image gcr.io/$PROJECT_ID/frontend:$SHORT_SHA \
+            --region $_REGION \
+            --platform=managed \
+            --quiet
+        fi
+
+  # ---------- BACKEND ----------
+  - name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        if [[ "$_SERVICE_NAME" == "backend" ]]; then
+          docker build -t gcr.io/$PROJECT_ID/backend:$SHORT_SHA server
+        fi
+
+  - name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        if [[ "$_SERVICE_NAME" == "backend" ]]; then
+          docker push gcr.io/$PROJECT_ID/backend:$SHORT_SHA
+        fi
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        if [[ "$_SERVICE_NAME" == "backend" ]]; then
+          gcloud run deploy backend \
+            --image gcr.io/$PROJECT_ID/backend:$SHORT_SHA \
+            --region $_REGION \
+            --platform=managed \
+            --quiet
+        fi

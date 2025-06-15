@@ -7,14 +7,17 @@ import {
 } from '@tanstack/react-table';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
+
 function ExchangeRateTable({ baseCurrency }) {
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const [exchangeRates, setExchangeRates] = useState([]);
   const [sorting, setSorting] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`http://localhost:8000/exchange-rates/${baseCurrency}`);
+        const response = await fetch(`${backend_url}/exchange-rates/${baseCurrency}`);
         if (!response.ok) {
           throw new Error('Failed to fetch exchange rates');
         }
