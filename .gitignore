@@ -1,0 +1,5 @@
+# Ignore Terraform state and provider binaries
+.terraform/
+*.tfstate
+*.tfstate.*
+
