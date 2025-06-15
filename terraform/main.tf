@@ -14,27 +14,27 @@ resource "google_artifact_registry_repository" "artifact" {
 }
 
 
-resource "google_cloud_run_service" "cloud_run_server" {
-  name     = "cloud-run-server"
-  location = var.region
-  template {
-    spec {
-      service_account_name = google_service_account.sa_cloud_run_server.email
-      containers {
-        image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"
-         ports {
-          container_port = 8000
-        }
+# resource "google_cloud_run_service" "cloud_run_server" {
+#   name     = "cloud-run-server"
+#   location = var.region
+#   template {
+#     spec {
+#       service_account_name = google_service_account.sa_cloud_run_server.email
+#       containers {
+#         image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"
+#          ports {
+#           container_port = 8000
+#         }
         
-      }
-    }
-  }
+#       }
+#     }
+#   }
 
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-}
+#   traffic {
+#     percent         = 100
+#     latest_revision = true
+#   }
+# }
 resource "google_service_account" "sa_cloud_run_server" {
   account_id   = "cloud-run-executor-server"
   display_name = "SA for running Cloud Run"
@@ -68,68 +68,63 @@ resource "google_cloud_run_service_iam_member" "backend_allow_frontend" {
   # זה הסרוויס אקאונט של הפרונט
   member = "serviceAccount:${google_service_account.sa_cloud_run_client.email}"
 }
-resource "google_cloud_run_service" "cloud_run_frontend" {
-  name     = "cloud-run-frontend"
-  location = var.region
-  template {
-    spec {
-      service_account_name = google_service_account.sa_cloud_run_client.email
-      containers {
-        image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"
-        ports {
-          container_port = 80
-        }
-        env {
-          name  = "VITE_BACKEND_URL" # השם שתבחרי למשתנה הסביבה בקוד הפרונטאנד שלך
-          value = google_cloud_run_service.cloud_run_server.status[0].url # הערך הוא ה-URL מהבאקאנד!
-        }
-      }
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-}
-
-resource "google_sourcerepo_repository" "my_repo" {
-  name = "my-source-repo"
-}
-
-
-# resource "google_cloudbuild_trigger" "frontend_trigger" {
-#   name     = "frontend-trigger"
-#   filename = "cloudbuild.yaml"
-
-#   trigger_template {
-#     project_id  = var.project_id
-#     repo_name   = google_sourcerepo_repository.my_repo.name
-#     branch_name = "main"
+# resource "google_cloud_run_service" "cloud_run_frontend" {
+#   name     = "cloud-run-frontend"
+#   location = var.region
+#   template {
+#     spec {
+#       service_account_name = google_service_account.sa_cloud_run_client.email
+#       containers {
+#         image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"
+#         ports {
+#           container_port = 80
+#         }
+#         env {
+#           name  = "VITE_BACKEND_URL" # השם שתבחרי למשתנה הסביבה בקוד הפרונטאנד שלך
+#           value = google_cloud_run_service.cloud_run_server.status[0].url # הערך הוא ה-URL מהבאקאנד!
+#         }
+#       }
+#     }
 #   }
 
-#   included_files = ["client/**"]
-
-#   substitutions = {
-#     _SERVICE_NAME = "frontend"
+#   traffic {
+#     percent         = 100
+#     latest_revision = true
 #   }
 # }
-# resource "google_cloudbuild_trigger" "backend_trigger" {
-#   name     = "backend-trigger"
-#   filename = "cloudbuild.yaml"
 
-#   trigger_template {
-#     project_id  = var.project_id
-#     repo_name   = google_sourcerepo_repository.my_repo.name
-#     branch_name = "main"
-#   }
+resource "google_cloudbuild_trigger" "frontend_trigger" {
+  name     = "frontend-trigger"
+  filename = "cloudbuild.yaml"
 
-#   included_files = ["server/**"]
+  trigger_template {
+    project_id  = var.project_id
+    repo_name   = google_sourcerepo_repository.my_repo.name
+    branch_name = "main"
+  }
 
-#   substitutions = {
-#     _SERVICE_NAME = "backend"
-#   }
-# }
+  included_files = ["client/**"]
+
+  substitutions = {
+    _SERVICE_NAME = "frontend"
+  }
+}
+resource "google_cloudbuild_trigger" "backend_trigger" {
+  name     = "backend-trigger"
+  filename = "cloudbuild.yaml"
+
+  trigger_template {
+    project_id  = var.project_id
+    repo_name   = google_sourcerepo_repository.my_repo.name
+    branch_name = "main"
+  }
+
+  included_files = ["server/**"]
+
+  substitutions = {
+    _SERVICE_NAME = "backend"
+  }
+}
 
 #==============================================================================לואוד באלאנסר בשביל הקלאוד רן
 # resource "google_compute_region_network_endpoint_group" "cloud_run_neg" {
