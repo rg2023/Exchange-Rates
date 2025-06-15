@@ -66,7 +66,7 @@ resource "google_cloud_run_service_iam_member" "backend_allow_frontend" {
   role     = "roles/run.invoker"
 
   # זה הסרוויס אקאונט של הפרונט
-  member = "serviceAccount:${google_service_account.sa_cloud_run_client.email}"
+   member = "serviceAccount:${google_service_account.sa_cloud_run_client.email}"
 }
 # resource "google_cloud_run_service" "cloud_run_frontend" {
 #   name     = "cloud-run-frontend"
