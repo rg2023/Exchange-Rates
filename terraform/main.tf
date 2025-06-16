@@ -122,25 +122,70 @@ resource "google_project_iam_member" "cloudbuild_sa_secret_accessor" {
   role    = "roles/secretmanager.admin"
   member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
 }
+
+
+
+
+
+
+# resource "google_secret_manager_secret" "github-token-secret" {
+#   secret_id = "github-token-secret"  
+#   replication {
+#     auto {}
+#   }
+# }
+# resource "google_secret_manager_secret_version" "github-token-secret-version" {
+#   secret = google_secret_manager_secret.github-token-secret.id
+#   secret_data = file("private-key.pem")  
+# }
+
+# data "google_iam_policy" "p4sa-secretAccessor" {
+#   binding {
+#     role = "roles/secretmanager.secretAccessor"
+#     members = ["serviceAccount:service-452333776264@gcp-sa-cloudbuild.iam.gserviceaccount.com"]
+#   }
+# }
+
+# resource "google_secret_manager_secret_iam_policy" "policy" {
+#   secret_id = google_secret_manager_secret.github-token-secret.secret_id
+#   policy_data = data.google_iam_policy.p4sa-secretAccessor.policy_data
+# }
+
+# resource "google_cloudbuildv2_connection" "my-connection" {
+#   location = "me-west1"  // או האזור שבו את רוצה ליצור את החיבור
+#   name = "my-connection"
+
+#   github_config {
+#     app_installation_id = 71470455
+#     authorizer_credential {
+#       oauth_token_secret_version = "projects/452333776264/secrets/github/versions/1"  // עדכני את זה לגרסה הנכונה של הסוד שלך
+#     }
+#   }
+# }
+
 resource "google_cloudbuildv2_repository" "my_repository" {
   name              = "Exchange-Rates"  
   parent_connection = "projects/sandbox-lz-rachelge/locations/me-west1/connections/github"
   remote_uri        = "https://github.com/rg2023/Exchange-Rates.git"
 }
+
 resource "google_cloudbuild_trigger" "github_trigger" {
-  name = "frontend-trigger"
-  filename = "cloudbuild.yaml"  
+  name         = "frontend-trigger"
+  filename     = "cloudbuild.yaml"
   github {
     owner = "rg2023"
     name  = "Exchange-Rates"
-
     push {
       branch = "^master$"
     }
   }
-
+    included_files = [
+    "client/**"
+  ]
+  # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
   service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
 }
+
 
 
 #==============================================================================לואוד באלאנסר בשביל הקלאוד רן
