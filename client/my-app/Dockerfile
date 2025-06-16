@@ -4,8 +4,6 @@ WORKDIR /app
 COPY package*.json ./
 
 
-# ARG VITE_BACKEND_URL
-# ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 
 COPY . .
 RUN npm install
