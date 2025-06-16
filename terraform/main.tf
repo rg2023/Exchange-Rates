@@ -92,20 +92,68 @@ resource "google_artifact_registry_repository" "artifact" {
 #   }
 # }
 
-resource "google_cloudbuild_trigger" "filename-trigger" {
-  location = "me-west1"
+resource "google_secret_manager_secret_iam_member" "cloudbuild_can_access_versions" {
+  secret_id = "github"
+  role      = "roles/secretmanager.admin"
+  member    = "serviceAccount:service-452333776264@gcp-sa-cloudbuild.iam.gserviceaccount.com"
+}
 
-  trigger_template {
-    branch_name = "master"
-    repo_name   = "Exchange-Rates"
+
+# resource "google_cloudbuildv2_connection" "github_connection" {
+#   location = "me-west1"
+#   name     = "my-connection"
+
+#   github_config {
+#     app_installation_id          = 1470455  # תקבלי אותו מכאן למטה
+#     authorizer_credential {
+#       oauth_token_secret_version = "projects/sandbox-lz-rachelge/secrets/github/versions/1"
+#     }
+#   }
+# }
+resource "google_service_account" "cloudbuild_sa" {
+  account_id   = "cloud-build-sa"
+  display_name = "Cloud Build SA"
+  project      = var.project_id
+}
+resource "google_project_iam_member" "cloudbuild_sa_builds_editor" {
+  project = var.project_id
+  role    = "roles/cloudbuild.builds.editor"
+  member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
+}
+resource "google_project_iam_member" "cloudbuild_sa_run_admin" {
+  project = var.project_id
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
+}
+
+resource "google_project_iam_member" "cloudbuild_sa_artifact_writer" {
+  project = var.project_id
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
+}
+resource "google_project_iam_member" "cloudbuild_sa_secret_accessor" {
+  project = var.project_id
+  role    = "roles/secretmanager.admin"
+  member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
+}
+resource "google_cloudbuildv2_repository" "my_repository" {
+  name              = "Exchange-Rates"  # השם של הריפו בגיטהאב
+  parent_connection = "projects/sandbox-lz-rachelge/locations/me-west1/connections/github"
+  remote_uri        = "https://github.com/rg2023/Exchange-Rates.git"
+}
+resource "google_cloudbuild_trigger" "github_trigger" {
+  name = "exchange-rates-trigger"
+  filename = "cloudbuild.yaml"  # שם הקובץ של ה־Cloud Build Trigger
+  github {
+    owner = "rg2023"
+    name  = "Exchange-Rates"
+
+    push {
+      branch = "^master$"
+    }
   }
 
-  substitutions = {
-    _FOO = "bar"
-    _BAZ = "qux"
-  }
-
-  filename = "cloudbuild.yaml"
+  service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
 }
 
 
