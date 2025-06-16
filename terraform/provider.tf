@@ -8,5 +8,6 @@ terraform {
     bucket  = "gcs-terraform--state"
     prefix  = "terraform/state"
   }
-}
+  }
+  
 
