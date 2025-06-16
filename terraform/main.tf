@@ -186,7 +186,22 @@ resource "google_cloudbuild_trigger" "github_trigger" {
   service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
 }
 
-
+resource "google_cloudbuild_trigger" "github_trigger" {
+  name         = "server-trigger"
+  filename     = "cloudbuild.yaml"
+  github {
+    owner = "rg2023"
+    name  = "Exchange-Rates"
+    push {
+      branch = "^master$"
+    }
+  }
+    included_files = [
+    "server/**"
+  ]
+  # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
+  service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
+}
 
 #==============================================================================לואוד באלאנסר בשביל הקלאוד רן
 # resource "google_compute_region_network_endpoint_group" "cloud_run_neg" {

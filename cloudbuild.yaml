@@ -8,11 +8,11 @@ steps:
   # ---------- FRONTEND ----------
   - name: "gcr.io/cloud-builders/docker"
     dir: "client/my-app"
-    args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:$SHORT_SHA", "."]
+    args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest", "."]
 
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:$SHORT_SHA"]
+    args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"]
   # - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
   #   args:
   #     - gcloud
@@ -27,11 +27,11 @@ steps:
   # ---------- BACKEND ----------
   - name: "gcr.io/cloud-builders/docker"
     dir: "server"
-    args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:$SHORT_SHA", "."]
+    args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest", "."]
 
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:$SHORT_SHA"]
+    args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"]
 
   # - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
   #   args:
