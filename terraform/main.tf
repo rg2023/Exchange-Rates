@@ -112,7 +112,6 @@ resource "google_project_iam_member" "cloudbuild_sa_run_admin" {
   role    = "roles/run.admin"
   member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
 }
-
 resource "google_project_iam_member" "cloudbuild_sa_artifact_writer" {
   project = var.project_id
   role    = "roles/artifactregistry.writer"
@@ -124,13 +123,13 @@ resource "google_project_iam_member" "cloudbuild_sa_secret_accessor" {
   member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
 }
 resource "google_cloudbuildv2_repository" "my_repository" {
-  name              = "Exchange-Rates"  # השם של הריפו בגיטהאב
+  name              = "Exchange-Rates"  
   parent_connection = "projects/sandbox-lz-rachelge/locations/me-west1/connections/github"
   remote_uri        = "https://github.com/rg2023/Exchange-Rates.git"
 }
 resource "google_cloudbuild_trigger" "github_trigger" {
-  name = "exchange-rates-trigger"
-  filename = "cloudbuild.yaml"  # שם הקובץ של ה־Cloud Build Trigger
+  name = "frontend-trigger"
+  filename = "cloudbuild.yaml"  
   github {
     owner = "rg2023"
     name  = "Exchange-Rates"
