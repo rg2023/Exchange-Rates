@@ -97,19 +97,6 @@ resource "google_secret_manager_secret_iam_member" "cloudbuild_can_access_versio
   role      = "roles/secretmanager.admin"
   member    = "serviceAccount:service-452333776264@gcp-sa-cloudbuild.iam.gserviceaccount.com"
 }
-
-
-# resource "google_cloudbuildv2_connection" "github_connection" {
-#   location = "me-west1"
-#   name     = "my-connection"
-
-#   github_config {
-#     app_installation_id          = 1470455  # תקבלי אותו מכאן למטה
-#     authorizer_credential {
-#       oauth_token_secret_version = "projects/sandbox-lz-rachelge/secrets/github/versions/1"
-#     }
-#   }
-# }
 resource "google_service_account" "cloudbuild_sa" {
   account_id   = "cloud-build-sa"
   display_name = "Cloud Build SA"
