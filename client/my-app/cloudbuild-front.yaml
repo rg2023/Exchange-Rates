@@ -7,6 +7,7 @@ substitutions:
 
 
 steps:
+  steps:
   # שלב 1: שליפת כתובת ה־Backend
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'get-backend-url'
@@ -14,19 +15,8 @@ steps:
     args:
       - -c
       - |
-        BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=${_REGION} --format='value(status.url)')
-        echo "export BACKEND_URL=$BACKEND_URL" > /workspace/backend.env
-
-  # שלב 2: החלפה של __BACKEND_URL__ בקובץ env.js
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'inject-env-js'
-    entrypoint: 'bash'
-    dir: 'client/my-app/public'
-    args:
-      - -c
-      - |
-        source /workspace/backend.env
-        sed -i "s|__BACKEND_URL__|$BACKEND_URL|g" env.js
+        BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=me-west1 --format='value(status.url)')
+        echo "window.VITE_BACKEND_URL = \"$BACKEND_URL\";" > client/my-app/public/env.js
 
   # שלב 3: בניית דוקר לאפליקציית ה-Frontend
   - name: "gcr.io/cloud-builders/docker"
