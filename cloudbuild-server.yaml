@@ -1,6 +1,8 @@
 options:
   logging: CLOUD_LOGGING_ONLY
-
+substitutions:
+  _REGION: "me-west1"
+  _PROJECT_ID: "sandbox-lz-rachelge"
 steps:
   - name: "gcr.io/cloud-builders/docker"
     dir: "server"
@@ -9,14 +11,14 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"]
 
-  # - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-  #   args:
-  #     - gcloud
-  #     - run
-  #     - deploy
-  #     - backend
-  #     - --image=gcr.io/$PROJECT_ID/backend:$SHORT_SHA
-  #     - --region=${_REGION}
-  #     - --platform=managed
-  #     - --quiet
-    # onlyIfChanged: "server/**"
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    args:
+      - gcloud
+      - run
+      - deploy
+      - backend
+      - --image=gcr.io/$PROJECT_ID/backend:latest
+      - --region=${_REGION}
+      - --platform=managed
+      - --quiet
+  

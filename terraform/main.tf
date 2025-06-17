@@ -12,79 +12,79 @@ resource "google_artifact_registry_repository" "artifact" {
   format        = "DOCKER"
   depends_on = [google_project_service.enabled_apis["artifactregistry.googleapis.com"]]
 }
-# resource "google_cloud_run_service" "cloud_run_server" {
-#   name     = "cloud-run-server"
-#   location = var.region
-#   template {
-#     spec {
-#       service_account_name = google_service_account.sa_cloud_run_server.email
-#       containers {
-#         image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"
-#          ports {
-#           container_port = 8000
-#         }
+resource "google_cloud_run_service" "cloud_run_server" {
+  name     = "cloud-run-server"
+  location = var.region
+  template {
+    spec {
+      service_account_name = google_service_account.sa_cloud_run_server.email
+      containers {
+        image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"
+         ports {
+          container_port = 8000
+        }
         
-#       }
-#     }
-#   }
+      }
+    }
+  }
 
-#   traffic {
-#     percent         = 100
-#     latest_revision = true
-#   }
-# }
-# resource "google_service_account" "sa_cloud_run_server" {
-#   account_id   = "cloud-run-executor-server"
-#   display_name = "SA for running Cloud Run"
-# }
-# resource "google_project_iam_member" "sa_server" {
-#   role   = "roles/artifactregistry.reader" 
-#   member = "serviceAccount:${google_service_account.sa_cloud_run_server.email}"
-#   project = var.project_id
-# }
-# resource "google_service_account" "sa_cloud_run_client" {
-#   account_id   = "cloud-run-executor-client"
-#   display_name = "SA for running Cloud Run"
-# }
-# resource "google_cloud_run_service_iam_member" "sa_frontend" {
-#   location = var.region
-#   service  = google_cloud_run_service.cloud_run_frontend.name
-#   role     = "roles/run.invoker"
-#   member   = "user:rachelge-aaaa@sandboxgcp.cloud"
-# }
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
+resource "google_service_account" "sa_cloud_run_server" {
+  account_id   = "cloud-run-executor-server"
+  display_name = "SA for running Cloud Run"
+}
+resource "google_project_iam_member" "sa_server" {
+  role   = "roles/artifactregistry.reader" 
+  member = "serviceAccount:${google_service_account.sa_cloud_run_server.email}"
+  project = var.project_id
+}
+resource "google_service_account" "sa_cloud_run_client" {
+  account_id   = "cloud-run-executor-client"
+  display_name = "SA for running Cloud Run"
+}
+resource "google_cloud_run_service_iam_member" "sa_frontend" {
+  location = var.region
+  service  = google_cloud_run_service.cloud_run_frontend.name
+  role     = "roles/run.invoker"
+  member   = "user:rachelge-aaaa@sandboxgcp.cloud"
+}
 
-# # גישה ל־frontend להריץ את backend
-# resource "google_cloud_run_service_iam_member" "backend_allow_frontend" {
-#   location = google_cloud_run_service.cloud_run_server.location
-#   service  = google_cloud_run_service.cloud_run_server.name
-#   role     = "roles/run.invoker"
-#   # זה הסרוויס אקאונט של הפרונט
-#    member = "serviceAccount:${google_service_account.sa_cloud_run_client.email}"
-# }
-# resource "google_cloud_run_service" "cloud_run_frontend" {
-#   name     = "cloud-run-frontend"
-#   location = var.region
-#   template {
-#     spec {
-#       service_account_name = google_service_account.sa_cloud_run_client.email
-#       containers {
-#         image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"
-#         ports {
-#           container_port = 80
-#         }
-#         env {
-#           name  = "VITE_BACKEND_URL" # השם שתבחרי למשתנה הסביבה בקוד הפרונטאנד שלך
-#           value = google_cloud_run_service.cloud_run_server.status[0].url # הערך הוא ה-URL מהבאקאנד!
-#         }
-#       }
-#     }
-#   }
+# גישה ל־frontend להריץ את backend
+resource "google_cloud_run_service_iam_member" "backend_allow_frontend" {
+  location = google_cloud_run_service.cloud_run_server.location
+  service  = google_cloud_run_service.cloud_run_server.name
+  role     = "roles/run.invoker"
+  # זה הסרוויס אקאונט של הפרונט
+   member = "serviceAccount:${google_service_account.sa_cloud_run_client.email}"
+}
+resource "google_cloud_run_service" "cloud_run_frontend" {
+  name     = "cloud-run-frontend"
+  location = var.region
+  template {
+    spec {
+      service_account_name = google_service_account.sa_cloud_run_client.email
+      containers {
+        image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"
+        ports {
+          container_port = 80
+        }
+        env {
+          name  = "VITE_BACKEND_URL" # השם שתבחרי למשתנה הסביבה בקוד הפרונטאנד שלך
+          value = google_cloud_run_service.cloud_run_server.status[0].url # הערך הוא ה-URL מהבאקאנד!
+        }
+      }
+    }
+  }
 
-#   traffic {
-#     percent         = 100
-#     latest_revision = true
-#   }
-# }
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
 
 resource "google_service_account" "cloudbuild_sa" {
   account_id   = "cloud-build-sa"
