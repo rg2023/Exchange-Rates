@@ -137,7 +137,7 @@ resource "google_cloudbuild_trigger" "server_trigger" {
       branch = "^master$"
     }
   }
-  included_files = ["client/**", "server/**"]
+  included_files = ["server/**"]
   # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
   service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
 }
