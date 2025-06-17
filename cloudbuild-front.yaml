@@ -20,5 +20,6 @@
       - frontend
       - --image=me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest
       - --region=${_REGION}
+      - --port=80
       - --platform=managed
       - --service-account=cloud-run-executor-server@${_PROJECT_ID}.iam.gserviceaccount.com
