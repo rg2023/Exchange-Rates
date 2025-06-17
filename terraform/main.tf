@@ -110,9 +110,26 @@ resource "google_project_iam_member" "cloudbuild_sa_artifact_writer" {
 #   parent_connection = "projects/sandbox-lz-rachelge/locations/me-west1/connections/github"
 #   remote_uri        = "https://github.com/rg2023/Exchange-Rates.git"
 # }
-resource "google_cloudbuild_trigger" "trigger" {
+resource "google_cloudbuild_trigger" "frontend_trigger" {
+  name         = "frontend-trigger"
+  filename     = "cloudbuild-front.yaml"
+  github {
+    owner = "rg2023"
+    name  = "Exchange-Rates"
+    push {
+      branch = "^master$"
+    }
+  }
+    included_files = [
+    "client/**"
+  ]
+  # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
+  service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
+}
+
+resource "google_cloudbuild_trigger" "server_trigger" {
   name         = "server-trigger"
-  filename     = "cloudbuild.yaml"
+  filename     = "cloudbuild-server.yaml"
   github {
     owner = "rg2023"
     name  = "Exchange-Rates"

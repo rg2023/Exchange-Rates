@@ -1,0 +1,19 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    dir: "server"
+    args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest", "."]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"]
+
+  # - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+  #   args:
+  #     - gcloud
+  #     - run
+  #     - deploy
+  #     - backend
+  #     - --image=gcr.io/$PROJECT_ID/backend:$SHORT_SHA
+  #     - --region=${_REGION}
+  #     - --platform=managed
+  #     - --quiet
+    # onlyIfChanged: "server/**"
