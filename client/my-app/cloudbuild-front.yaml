@@ -1,73 +1,41 @@
-# options:
-#   logging: CLOUD_LOGGING_ONLY
-
-# substitutions:
-#   _REGION: "me-west1"
-#   _PROJECT_ID: "sandbox-lz-rachelge"
-
-# steps:
-#   # שלב 1: שליפת כתובת ה־Backend ויצירת קובץ env.js
-#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#     id: 'get-backend-url'
-#     entrypoint: 'bash'
-#     args:
-#       - -c
-#       - |
-#         BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=${_REGION} --format='value(status.url)')
-#         echo "window.VITE_BACKEND_URL = \"$BACKEND_URL\";" > client/my-app/public/env.js
-
-#   # שלב 2: בניית דוקר לאפליקציית ה-Frontend
-#   - name: "gcr.io/cloud-builders/docker"
-#     dir: "client/my-app"
-#     args: ["build", "-t", "me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest", "."]
-
-#   # שלב 3: דחיפה של התמונה
-#   - name: "gcr.io/cloud-builders/docker"
-#     args: ["push", "me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest"]
-
-#   # שלב 4: דיפלוי של ה-Frontend
-#   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-#     args:
-#       - gcloud
-#       - run
-#       - deploy
-#       - cloud-run-frontend
-#       - --image=me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest
-#       - --region=${_REGION}
-#       - --port=80
-#       - --platform=managed
-
-
 options:
   logging: CLOUD_LOGGING_ONLY
 
+substitutions:
+  _REGION: "me-west1"
+  _PROJECT_ID: "sandbox-lz-rachelge"
+  _BACKEND_URL: unused
+
 steps:
+  # שלב 1: שליפת כתובת ה־Backend ויצירת קובץ env.js
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'get-backend-url'
     entrypoint: 'bash'
-    env:
-      - 'REGION=me-west1'
-      - 'PROJECT_ID=sandbox-lz-rachelge'
     args:
       - -c
       - |
-        BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=$REGION --format='value(status.url)')
-        echo "window.VITE_BACKEND_URL = \"$BACKEND_URL\";" > client/my-app/public/env.js
+        _BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=${_REGION} --format='value(status.url)')
+        echo "window.VITE_BACKEND_URL = \"$_BACKEND_URL\";" > client/my-app/public/env.js
 
+  # שלב 2: בניית דוקר לאפליקציית ה-Frontend
   - name: "gcr.io/cloud-builders/docker"
     dir: "client/my-app"
-    env:
-      - 'PROJECT_ID=sandbox-lz-rachelge'
-    args:
-      - build
-      - -t
-      - me-west1-docker.pkg.dev/${PROJECT_ID}/repo/frontend:latest
-      - "."
+    args: ["build", "-t", "me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest", "."]
 
+  # שלב 3: דחיפה של התמונה
   - name: "gcr.io/cloud-builders/docker"
-    env:
-      - 'PROJECT_ID=sandbox-lz-rachelge'
+    args: ["push", "me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest"]
+
+  # שלב 4: דיפלוי של ה-Frontend
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
-      - push
-      - "me-west1-docker.pkg.dev/${PROJECT_ID}/repo/frontend:latest"
+      - gcloud
+      - run
+      - deploy
+      - cloud-run-frontend
+      - --image=me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest
+      - --region=${_REGION}
+      - --port=80
+      - --platform=managed
+
 
