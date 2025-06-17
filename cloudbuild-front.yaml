@@ -18,7 +18,7 @@
       - run
       - deploy
       - frontend
-      - --image=gcr.io/$PROJECT_ID/frontend:latest
+      - --image=me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest
       - --region=${_REGION}
       - --platform=managed
-      - --quiet
+      - --service-account=cloud-run-executor-server@${_PROJECT_ID}.iam.gserviceaccount.com
