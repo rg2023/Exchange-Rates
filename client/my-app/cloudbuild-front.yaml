@@ -6,26 +6,26 @@ substitutions:
   _PROJECT_ID: "sandbox-lz-rachelge"
 
 steps:
-  # שלב 1: שליפת כתובת ה־Backend
+  # שלב 1: שליפת כתובת ה־Backend ויצירת קובץ env.js
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'get-backend-url'
     entrypoint: 'bash'
     args:
       - -c
       - |
-        BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=me-west1 --format='value(status.url)')
+        BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=${_REGION} --format='value(status.url)')
         echo "window.VITE_BACKEND_URL = \"$BACKEND_URL\";" > client/my-app/public/env.js
 
-  # שלב 3: בניית דוקר לאפליקציית ה-Frontend
+  # שלב 2: בניית דוקר לאפליקציית ה-Frontend
   - name: "gcr.io/cloud-builders/docker"
     dir: "client/my-app"
-    args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest", "."]
+    args: ["build", "-t", "me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest", "."]
 
-  # שלב 4: דחיפה של התמונה
+  # שלב 3: דחיפה של התמונה
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"]
+    args: ["push", "me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest"]
 
-  # שלב 5: דיפלוי של ה-Frontend
+  # שלב 4: דיפלוי של ה-Frontend
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
       - gcloud
