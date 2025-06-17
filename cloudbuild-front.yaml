@@ -22,4 +22,4 @@
       - --region=${_REGION}
       - --port=80
       - --platform=managed
-      - --service-account=cloud-run-executor-server@${_PROJECT_ID}.iam.gserviceaccount.com
+      # - --service-account=cloud-run-executor-server@${_PROJECT_ID}.iam.gserviceaccount.com
