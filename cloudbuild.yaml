@@ -9,10 +9,15 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     dir: "client/my-app"
     args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest", "."]
-
+    id: build-frontend
+    waitFor: ["-"]
+    onlyIfChanged: "client/**"
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"]
+    id: build-frontend
+    waitFor: ["-"]
+    onlyIfChanged: "client/**"
   # - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
   #   args:
   #     - gcloud
@@ -23,15 +28,19 @@ steps:
   #     - --region=${_REGION}
   #     - --platform=managed
   #     - --quiet
+      # onlyIfChanged: "client/**"
 
   # ---------- BACKEND ----------
   - name: "gcr.io/cloud-builders/docker"
     dir: "server"
     args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest", "."]
-
+    waitFor: ["-"]
+    onlyIfChanged: "server/**"
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"]
+    waitFor: ["build-backend"]
+    onlyIfChanged: "server/**"
 
   # - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
   #   args:
@@ -43,3 +52,4 @@ steps:
   #     - --region=${_REGION}
   #     - --platform=managed
   #     - --quiet
+    # onlyIfChanged: "server/**"

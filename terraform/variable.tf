@@ -8,10 +8,10 @@ variable "project_id" {
 variable "sa_email_to_impersonate" {
   type = string 
 }
-variable "image_url" {
-  description = "Docker image URL for Cloud Run"
-  type        = string
-}
+# variable "image_url" {
+#   description = "Docker image URL for Cloud Run"
+#   type        = string
+# }
 variable "required_apis" {
   type = list(string)
   default = [
@@ -21,7 +21,4 @@ variable "required_apis" {
     "cloudresourcemanager.googleapis.com",
     "cloudbuild.googleapis.com"
   ]
-}
-data "google_project" "current" {
-  project_id = var.project_id
 }

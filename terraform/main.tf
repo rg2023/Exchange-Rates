@@ -12,8 +12,6 @@ resource "google_artifact_registry_repository" "artifact" {
   format        = "DOCKER"
   depends_on = [google_project_service.enabled_apis["artifactregistry.googleapis.com"]]
 }
-
-
 # resource "google_cloud_run_service" "cloud_run_server" {
 #   name     = "cloud-run-server"
 #   location = var.region
@@ -44,10 +42,6 @@ resource "google_artifact_registry_repository" "artifact" {
 #   member = "serviceAccount:${google_service_account.sa_cloud_run_server.email}"
 #   project = var.project_id
 # }
-
-
-
-
 # resource "google_service_account" "sa_cloud_run_client" {
 #   account_id   = "cloud-run-executor-client"
 #   display_name = "SA for running Cloud Run"
@@ -92,15 +86,9 @@ resource "google_artifact_registry_repository" "artifact" {
 #   }
 # }
 
-resource "google_secret_manager_secret_iam_member" "cloudbuild_can_access_versions" {
-  secret_id = "github"
-  role      = "roles/secretmanager.admin"
-  member    = "serviceAccount:service-452333776264@gcp-sa-cloudbuild.iam.gserviceaccount.com"
-}
 resource "google_service_account" "cloudbuild_sa" {
   account_id   = "cloud-build-sa"
   display_name = "Cloud Build SA"
-  project      = var.project_id
 }
 resource "google_project_iam_member" "cloudbuild_sa_builds_editor" {
   project = var.project_id
@@ -117,76 +105,12 @@ resource "google_project_iam_member" "cloudbuild_sa_artifact_writer" {
   role    = "roles/artifactregistry.writer"
   member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
 }
-resource "google_project_iam_member" "cloudbuild_sa_secret_accessor" {
-  project = var.project_id
-  role    = "roles/secretmanager.admin"
-  member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
-}
-
-
-
-
-
-
-# resource "google_secret_manager_secret" "github-token-secret" {
-#   secret_id = "github-token-secret"  
-#   replication {
-#     auto {}
-#   }
+# resource "google_cloudbuildv2_repository" "my_repository" {
+#   name              = "Exchange-Rates"  
+#   parent_connection = "projects/sandbox-lz-rachelge/locations/me-west1/connections/github"
+#   remote_uri        = "https://github.com/rg2023/Exchange-Rates.git"
 # }
-# resource "google_secret_manager_secret_version" "github-token-secret-version" {
-#   secret = google_secret_manager_secret.github-token-secret.id
-#   secret_data = file("private-key.pem")  
-# }
-
-# data "google_iam_policy" "p4sa-secretAccessor" {
-#   binding {
-#     role = "roles/secretmanager.secretAccessor"
-#     members = ["serviceAccount:service-452333776264@gcp-sa-cloudbuild.iam.gserviceaccount.com"]
-#   }
-# }
-
-# resource "google_secret_manager_secret_iam_policy" "policy" {
-#   secret_id = google_secret_manager_secret.github-token-secret.secret_id
-#   policy_data = data.google_iam_policy.p4sa-secretAccessor.policy_data
-# }
-
-# resource "google_cloudbuildv2_connection" "my-connection" {
-#   location = "me-west1"  // או האזור שבו את רוצה ליצור את החיבור
-#   name = "my-connection"
-
-#   github_config {
-#     app_installation_id = 71470455
-#     authorizer_credential {
-#       oauth_token_secret_version = "projects/452333776264/secrets/github/versions/1"  // עדכני את זה לגרסה הנכונה של הסוד שלך
-#     }
-#   }
-# }
-
-resource "google_cloudbuildv2_repository" "my_repository" {
-  name              = "Exchange-Rates"  
-  parent_connection = "projects/sandbox-lz-rachelge/locations/me-west1/connections/github"
-  remote_uri        = "https://github.com/rg2023/Exchange-Rates.git"
-}
-
-resource "google_cloudbuild_trigger" "github_trigger" {
-  name         = "frontend-trigger"
-  filename     = "cloudbuild.yaml"
-  github {
-    owner = "rg2023"
-    name  = "Exchange-Rates"
-    push {
-      branch = "^master$"
-    }
-  }
-    included_files = [
-    "client/**"
-  ]
-  # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
-  service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
-}
-
-resource "google_cloudbuild_trigger" "github_trigger" {
+resource "google_cloudbuild_trigger" "trigger" {
   name         = "server-trigger"
   filename     = "cloudbuild.yaml"
   github {
@@ -196,9 +120,7 @@ resource "google_cloudbuild_trigger" "github_trigger" {
       branch = "^master$"
     }
   }
-    included_files = [
-    "server/**"
-  ]
+  included_files = ["client/**", "server/**"]
   # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
   service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
 }
