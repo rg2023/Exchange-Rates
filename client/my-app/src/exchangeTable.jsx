@@ -10,14 +10,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function ExchangeRateTable({ baseCurrency }) {
-  // const backend_url = window.VITE_BACKEND_URL || "";
+  const backend_url = window.VITE_BACKEND_URL || "";
   const [exchangeRates, setExchangeRates] = useState([]);
   const [sorting, setSorting] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`__BACKEND_URL__/exchange-rates/${baseCurrency}`);
+        const response = await fetch(`${backend_url}/exchange-rates/${baseCurrency}`);
         if (!response.ok) {
           throw new Error('Failed to fetch exchange rates');
         }

@@ -4,6 +4,7 @@ options:
 substitutions:
   _REGION: "me-west1"
   _PROJECT_ID: "sandbox-lz-rachelge"
+  _BACKEND_URL: "http://localhost:8000"  # This is a placeholder, will be replaced dynamically
 
 steps:
   # שלב 1: שליפת כתובת ה־Backend
