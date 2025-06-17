@@ -5,11 +5,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function CurrencySelector({ baseCurrency, setBaseCurrency, currencies, setCurrencies }) {
-    const backend_url = window.VITE_BACKEND_URL || "";
+    // const backend_url = window.VITE_BACKEND_URL || "";
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch(`${backend_url}/currencies`);
+                const response = await fetch(`__BACKEND_URL__/currencies`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
