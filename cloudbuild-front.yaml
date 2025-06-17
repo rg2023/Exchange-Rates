@@ -1,4 +1,6 @@
-steps:
+ options:
+   logging: CLOUD_LOGGING_ONLY
+ steps:
   - name: "gcr.io/cloud-builders/docker"
     dir: "client/my-app"
     args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest", "."]
