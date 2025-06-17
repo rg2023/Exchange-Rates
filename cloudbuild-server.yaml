@@ -16,9 +16,8 @@ steps:
       - gcloud
       - run
       - deploy
-      - backend
+      - cloud-run-server
       - --image=me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/server:latest
       - --region=${_REGION}
       -  --port=8000
       - --platform=managed
-      - --service-account=cloud-run-executor-server@${_PROJECT_ID}.iam.gserviceaccount.com
