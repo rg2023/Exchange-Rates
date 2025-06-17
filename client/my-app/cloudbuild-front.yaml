@@ -1,11 +1,12 @@
- options:
-   logging: CLOUD_LOGGING_ONLY
-   
- substitutions:
-   _REGION: "me-west1"
-   _PROJECT_ID: "sandbox-lz-rachelge"
+options:
+  logging: CLOUD_LOGGING_ONLY
 
- steps:
+substitutions:
+  _REGION: "me-west1"
+  _PROJECT_ID: "sandbox-lz-rachelge"
+
+steps:
+  # שלב 1: שליפת כתובת ה־Backend
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'get-backend-url'
     entrypoint: 'bash'
@@ -13,9 +14,9 @@
       - -c
       - |
         BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=${_REGION} --format='value(status.url)')
-        echo "BACKEND_URL=$BACKEND_URL" > /workspace/backend.env
+        echo "export BACKEND_URL=$BACKEND_URL" > /workspace/backend.env
 
-  # 2. החלפת __BACKEND_URL__ בקובץ env.js
+  # שלב 2: החלפה של __BACKEND_URL__ בקובץ env.js
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'inject-env-js'
     entrypoint: 'bash'
@@ -24,22 +25,24 @@
       - -c
       - |
         source /workspace/backend.env
-        sed -i "s|__BACKEND_URL__|$$$$BACKEND_URL|g" env.js
+        sed -i "s|__BACKEND_URL__|$BACKEND_URL|g" env.js
 
+  # שלב 3: בניית דוקר לאפליקציית ה-Frontend
   - name: "gcr.io/cloud-builders/docker"
     dir: "client/my-app"
     args: ["build", "-t", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest", "."]
 
-
+  # שלב 4: דחיפה של התמונה
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"]
-  
+
+  # שלב 5: דיפלוי של ה-Frontend
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
       - gcloud
       - run
       - deploy
-      - cloud-run-frontend 
+      - cloud-run-frontend
       - --image=me-west1-docker.pkg.dev/${_PROJECT_ID}/repo/frontend:latest
       - --region=${_REGION}
       - --port=80
