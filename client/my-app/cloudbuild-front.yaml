@@ -24,7 +24,7 @@
       - -c
       - |
         source /workspace/backend.env
-        sed -i "s|__BACKEND_URL__|$BACKEND_URL|g" env.js
+        sed -i "s|__BACKEND_URL__|$$BACKEND_URL|g" env.js
 
   - name: "gcr.io/cloud-builders/docker"
     dir: "client/my-app"
