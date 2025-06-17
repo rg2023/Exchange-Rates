@@ -5,9 +5,7 @@ substitutions:
   _REGION: "me-west1"
   _PROJECT_ID: "sandbox-lz-rachelge"
 
-
 steps:
-  steps:
   # שלב 1: שליפת כתובת ה־Backend
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'get-backend-url'
