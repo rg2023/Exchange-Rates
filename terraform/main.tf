@@ -110,6 +110,12 @@ resource "google_project_iam_member" "cloud_build_logs_writer" {
   role    = "roles/logging.logWriter"
   member  = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
 }
+resource "google_service_account_iam_member" "cloudbuild_act_as_compute" {
+  service_account_id = google_service_account.sa_cloud_run_server.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.cloudbuild_sa.email}"
+}
+
 # resource "google_cloudbuildv2_repository" "my_repository" {
 #   name              = "Exchange-Rates"  
 #   parent_connection = "projects/sandbox-lz-rachelge/locations/me-west1/connections/github"
