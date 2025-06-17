@@ -128,7 +128,7 @@ resource "google_service_account_iam_member" "cloudbuild_act_as_cloudrun_fronten
 # }
 resource "google_cloudbuild_trigger" "frontend_trigger" {
   name         = "frontend-trigger"
-  filename     = "cloudbuild-front.yaml"
+  filename     = "client/my-app/cloudbuild-front.yaml"
   github {
     owner = "rg2023"
     name  = "Exchange-Rates"
@@ -144,7 +144,7 @@ resource "google_cloudbuild_trigger" "frontend_trigger" {
 
 resource "google_cloudbuild_trigger" "server_trigger" {
   name         = "server-trigger"
-  filename     = "cloudbuild-server.yaml"
+  filename     = "server/cloudbuild-server.yaml"
   github {
     owner = "rg2023"
     name  = "Exchange-Rates"
