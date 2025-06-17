@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function ExchangeRateTable({ baseCurrency }) {
-  const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const backend_url = window.VITE_BACKEND_URL || "";
   const [exchangeRates, setExchangeRates] = useState([]);
   const [sorting, setSorting] = useState([]);
 

@@ -72,10 +72,10 @@ resource "google_cloud_run_service" "cloud_run_frontend" {
         ports {
           container_port = 80
         }
-        env {
-          name  = "VITE_BACKEND_URL" # השם שתבחרי למשתנה הסביבה בקוד הפרונטאנד שלך
-          value = google_cloud_run_service.cloud_run_server.status[0].url # הערך הוא ה-URL מהבאקאנד!
-        }
+        # env {
+        #   name  = "VITE_BACKEND_URL" # השם שתבחרי למשתנה הסביבה בקוד הפרונטאנד שלך
+        #   value = google_cloud_run_service.cloud_run_server.status[0].url # הערך הוא ה-URL מהבאקאנד!
+        # }
       }
     }
   }
