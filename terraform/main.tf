@@ -19,7 +19,7 @@ resource "google_cloud_run_service" "cloud_run_server" {
     spec {
       service_account_name = google_service_account.sa_cloud_run_server.email
       containers {
-        image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/server:latest"
+        image = "gcr.io/cloudrun/hello"
          ports {
           container_port = 8000
         }
@@ -68,7 +68,7 @@ resource "google_cloud_run_service" "cloud_run_frontend" {
     spec {
       service_account_name = google_service_account.sa_cloud_run_client.email
       containers {
-        image = "me-west1-docker.pkg.dev/sandbox-lz-rachelge/repo/frontend:latest"
+        image = "gcr.io/cloudrun/hello"
         ports {
           container_port = 80
         }
@@ -134,7 +134,6 @@ resource "google_cloudbuild_trigger" "frontend_trigger" {
     included_files = [
     "client/**"
   ]
-  # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
   service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
 }
 
@@ -149,7 +148,6 @@ resource "google_cloudbuild_trigger" "server_trigger" {
     }
   }
   included_files = ["server/**"]
-  # ודאי שיש לך service account מוגדר במקום אחר, או החליפי כאן בכתובת קיימת
   service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
 }
 
