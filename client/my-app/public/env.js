@@ -1,0 +1,1 @@
+window.VITE_BACKEND_URL = "__BACKEND_URL__";

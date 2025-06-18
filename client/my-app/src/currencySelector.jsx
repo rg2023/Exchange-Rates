@@ -52,3 +52,4 @@ function CurrencySelector({ baseCurrency, setBaseCurrency, currencies, setCurren
 }
 
 export default CurrencySelector;
+// `http://localhost:8000/exchange-rates/${baseCurrency}`
