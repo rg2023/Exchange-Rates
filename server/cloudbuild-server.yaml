@@ -3,6 +3,7 @@ options:
 substitutions:
   _REGION: "me-west1"
   _PROJECT_ID: "sandbox-lz-rachelge"
+  _SERVICE_ACCOUNT: "cloud-run-backend-executor@sandbox-lz-rachelge.iam.gserviceaccount.com"
 steps:
   - name: "gcr.io/cloud-builders/docker"
     dir: "server"
@@ -21,3 +22,4 @@ steps:
       - --region=${_REGION}
       -  --port=8000
       - --platform=managed
+      - --service-account=${_SERVICE_ACCOUNT}
