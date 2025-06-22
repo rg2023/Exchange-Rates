@@ -37,5 +37,4 @@ variable "required_apis" {
 }
 variable "create_artifact_registry" {
   type = bool
-  default = false
 }

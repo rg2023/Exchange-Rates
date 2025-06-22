@@ -30,7 +30,7 @@ resource "google_project_iam_member" "cloud_build_logs_writer" {
 # אלו משאבים שדורשים service account של cloud run - יש להעביר בכניסה למודול את המיילים שלהם (כדי ליצור את המשאבים האלה, ניצור משתנים)
 resource "google_service_account_iam_member" "cloudbuild_act_as_cloudrun" {
   for_each = var.cloud_run_service_accounts
-  service_account_id = var.service_account_id
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${each.value}"
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${var.cloudbuild_sa_email}"
 }

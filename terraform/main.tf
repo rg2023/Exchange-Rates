@@ -8,6 +8,7 @@ module "cloud_run_frontend" {
   name   = "cloud-run-frontend"
   project_id = var.project_id  
   region = var.region
+
   service_account_id = "cloud-run-frontend-executor"
   service_account_display_name = "SA for running Cloud Run Frontend"
   invokers = [
@@ -21,6 +22,7 @@ module "cloud_run_backend" {
   name   = "cloud-run-backend"
   project_id = var.project_id
   region = var.region
+  port = 8000
   service_account_id = "cloud-run-backend-executor"
   service_account_display_name = "SA for running Cloud Run Backend"
   invokers = [
@@ -32,7 +34,7 @@ module "cloudbuild_trigger_frontend" {
   project_id   = var.project_id
   trigger_name = "frontend-trigger"
   cloudbuild_sa_email = google_service_account.cloudbuild_sa.email
-  service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
+  # service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
   trigger_path = "client/my-app/cloudbuild-front.yaml"
   github_owner = "rg2023"
   github_repo  = "Exchange-Rates"
@@ -48,9 +50,9 @@ cloud_run_service_accounts = {
 module "cloudbuild_trigger_backend" {
   source       = "./modules/cloud_build"
   project_id   = var.project_id
-  trigger_name = "server-trigger"
+  trigger_name = "backend-trigger"
   cloudbuild_sa_email = google_service_account.cloudbuild_sa.email
-  service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
+  # service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloudbuild_sa.email}"
   trigger_path = "server/cloudbuild-server.yaml"
   github_owner = "rg2023"
   github_repo  = "Exchange-Rates"
