@@ -42,25 +42,38 @@ module "docker_artifact_registry" {
     "roles/artifactregistry.reader" = ["serviceAccount:${module.cloud_run_backend.service_account_email}"]
   }
 }
-resource "google_service_account" "cloudbuild_sa" {
-  account_id   = "cloud-build-sa"
-  display_name = "Cloud Build SA"
-}
+module "create_sa_cloudbuild" {
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/iam-service-account"
+  project_id = var.project_id
+  name       = "sa-cloudbuild"
+  # authoritative roles granted *on* the service accounts to other identities
+  iam_project_roles = {
+    (var.project_id) = [
+      "roles/cloudbuild.builds.editor",
+      "roles/run.admin",
+      "roles/artifactregistry.writer",
+      "roles/logging.logWriter",
+    ]
+  }
+  iam_sa_roles = {
+    "projects/${var.project_id}/serviceAccounts/${module.cloud_run_frontend.service_account_email}" = [
+      "roles/iam.serviceAccountUser"
+    ],
+    "projects/${var.project_id}/serviceAccounts/${module.cloud_run_backend.service_account_email}" = [
+      "roles/iam.serviceAccountUser"
+    ]
+} 
+  }
 module "cloudbuild_trigger_frontend" {
   source       = "./modules/cloud_build"
   project_id   = var.project_id
-  service_account_email = google_service_account.cloudbuild_sa.email
+  service_account_email = module.create_sa_cloudbuild.email
   trigger_name = "frontend-trigger"
   trigger_path = "client/my-app/cloudbuild-front.yaml"
   github_owner = "rg2023"
   github_repo  = "Exchange-Rates"
   trigger_branch = "^master$"
   included_files = ["client/**"]
-
-cloud_run_service_accounts = {
-  frontend = module.cloud_run_frontend.service_account_email
-}
-
 }
 
 
@@ -68,14 +81,10 @@ module "cloudbuild_trigger_backend" {
   source       = "./modules/cloud_build"
   project_id   = var.project_id
   trigger_name = "backend-trigger"
-  service_account_email = google_service_account.cloudbuild_sa.email
   trigger_path = "server/cloudbuild-server.yaml"
   github_owner = "rg2023"
   github_repo  = "Exchange-Rates"
   trigger_branch = "^master$"
   included_files = ["server/**"]
-
- cloud_run_service_accounts = {
-    backend  = module.cloud_run_backend.service_account_email
-}
+  service_account_email = module.create_sa_cloudbuild.email
  }

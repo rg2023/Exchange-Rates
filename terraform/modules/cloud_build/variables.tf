@@ -19,10 +19,6 @@ variable "trigger_branch" {
 variable "trigger_path" {
   type    = string
 }
-variable "cloud_run_service_accounts" {
-  type = map(string)
-}
-
 variable "service_account_email" {
   type = string
 }
