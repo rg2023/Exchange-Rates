@@ -25,9 +25,12 @@ module "cloud_run_backend" {
       port  = 8000
     }
   }
-  iam = {
-    "roles/run.invoker" = ["serviceAccount:${module.cloud_run_frontend.service_account_email}"]
-  }
+ iam = {
+  "roles/run.invoker" = [
+    "user:rachelge-aaaa@sandboxgcp.cloud",
+    "serviceAccount:sa-cloudbuild@sandbox-lz-rachelge.iam.gserviceaccount.com"
+  ]
+}
   service_account_create = true
 }
 module "docker_artifact_registry" {
