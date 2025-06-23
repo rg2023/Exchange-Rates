@@ -45,8 +45,8 @@ module "docker_artifact_registry" {
 module "create_sa_cloudbuild" {
   source               = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/iam-service-account"
   project_id           = var.project_id
-  name                 = "sa-cloudbuild"         # שם הסרוויס אקאונט
-  service_account_create = true                  # ליצור את ה-SA (אם False, רק ישתמש במשהו קיים)
+  name                 = "sa-cloudbuild"
+  service_account_create = true
   description          = "Service Account for Cloud Build"
   display_name         = "Cloud Build Service Account"
 
@@ -62,7 +62,6 @@ module "create_sa_cloudbuild" {
 
   # הרשאות "ActAs" (Service Account roles granted to this SA on other SAs)
   iam_sa_roles = {
-    # לרשום כאן service accounts של Cloud Run למשל
     "projects/${var.project_id}/serviceAccounts/${module.cloud_run_frontend.service_account_email}" = [
       "roles/iam.serviceAccountUser"
     ],
@@ -71,28 +70,6 @@ module "create_sa_cloudbuild" {
     ]
   }
 }
-
- 
-#   iam_sa_roles = {
-#   "projects/${var.project_id}/serviceAccounts/${module.cloud_run_frontend.service_account_email}" = [
-#     "roles/iam.serviceAccountUser"
-#   ],
-#   "projects/${var.project_id}/serviceAccounts/${module.cloud_run_backend.service_account_email}" = [
-#     "roles/iam.serviceAccountUser"
-#   ]
-# }
-
-#   resource "google_service_account_iam_member" "cloudbuild_act_as_frontend" {
-#   service_account_id = module.cloud_run_frontend.service_account_id
-#   role               = "roles/iam.serviceAccountUser"
-#   member             = "serviceAccount:${module.create_sa_cloudbuild.email}"
-# }
-
-# resource "google_service_account_iam_member" "cloudbuild_act_as_backend" {
-#   service_account_id = module.cloud_run_backend.service_account_id
-#   role               = "roles/iam.serviceAccountUser"
-#   member             = "serviceAccount:${module.create_sa_cloudbuild.email}"
-# }
 module "cloudbuild_trigger_frontend" {
   source       = "./modules/cloud_build"
   project_id   = var.project_id
