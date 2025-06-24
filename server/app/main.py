@@ -2,6 +2,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Dict, Any
 import httpx
+from pathlib import Path
+import json
+from app.utils import upload_file
+from datetime import datetime
+
 
 app = FastAPI()
 
@@ -16,7 +21,7 @@ app.add_middleware(
 
 
 currency_data = ["USD", "EUR", "GBP", "CNY", "ILS"]
-
+cached_exchange_data: Dict[str, list] = {}
 
 @app.get("/currencies/", response_model=List[str])
 def get_currencies():
@@ -36,9 +41,25 @@ async def get_exchange_rates(baseCurrency: str):
                     for currency in currency_data
                     if currency != baseCurrency and currency in data["conversion_rates"]
                 ]
+                cached_exchange_data[baseCurrency] = filtered_rates
                 return filtered_rates
             else:
                 raise HTTPException(status_code=response.status_code, detail="Failed to fetch exchange rates")
     except Exception as e:
         print(f"Error fetching exchange rates: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+app.post("/upload-to-bucket/{baseCurrency}")
+def upload_to_bucket(baseCurrency: str):
+    if baseCurrency not in cached_exchange_data:
+        raise HTTPException(status_code=404, detail="Data not found in memory. Please select a currency first.")
+    try:
+        json_data = json.dumps(cached_exchange_data[baseCurrency], indent=4)
+        bucket_name = "bucket_sandbox-lz-rachelge"
+        today_str = datetime.now().strftime("%Y-%m-%d")  
+        filename = f"exchange_rates_{baseCurrency}_{today_str}.json
+        return {"message": f"{filename} uploaded successfully to bucket {bucket_name}"}
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

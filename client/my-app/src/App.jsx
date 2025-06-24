@@ -1,24 +1,21 @@
-import React, { useState } from 'react';
-import CurrencySelector from './currencySelector';
-import ExchangeRateTable from './exchangeTable';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import HomePage from './HomePage';
+import UploadPage from './uploadFile';
 
 function App() {
-  const [baseCurrency, setBaseCurrency] = useState('');
-  const [currencies, setCurrencies] = useState([]);
-
   return (
-    <div>
-      <h1>Exchange Rates</h1>
-      <CurrencySelector
-        baseCurrency={baseCurrency}
-        setBaseCurrency={setBaseCurrency}
-        setCurrencies={setCurrencies}
-        currencies={currencies}
-      />
-      {baseCurrency && <ExchangeRateTable baseCurrency={baseCurrency} currencies={currencies} />}
-    </div>
+    <Router>
+      <nav>
+        <Link to="/" style={{ marginRight: 10 }}>Home</Link>
+        {/* כאן אפשר להוסיף קישורים לדפים נוספים בעתיד */}
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/upload/:baseCurrency" element={<UploadPage />} />
+      </Routes>
+    </Router>
   );
 }
-
 export default App;

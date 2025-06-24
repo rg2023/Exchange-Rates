@@ -124,4 +124,5 @@ function ExchangeRateTable({ baseCurrency }) {
   );
 }
 
+
 export default ExchangeRateTable;
