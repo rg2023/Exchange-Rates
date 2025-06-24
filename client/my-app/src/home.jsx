@@ -24,7 +24,13 @@ function HomePage() {
         className="btn btn-primary mt-3"
         onClick={() => navigate(`/upload/${baseCurrency}`)}
       >
-        🪣 שמור קובץ בבאקט
+        🪣 UPLOAD TO BUCKET 
+      </button>
+      <button
+        className="btn btn-primary mt-3"
+        onClick={() => navigate(`/save/${baseCurrency}`)}
+      >
+        SAVE IN DATABASE
       </button>
     </>
   )}

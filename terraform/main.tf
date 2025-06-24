@@ -11,7 +11,6 @@ resource "google_project_iam_member" "service_account_roles" {
     "roles/secretmanager.secretAccessor",
     "roles/aiplatform.user",
   ])
-
   project = var.project_id
   role    = each.key
   member  = "serviceAccount:${module.service_accounts.email}"
@@ -176,6 +175,17 @@ module "cloudbuild_trigger_backend" {
   github_repo  = "Exchange-Rates"
   trigger_branch = "^master$"
   included_files = ["server/**"]
+  service_account_email = module.create_sa_cloudbuild.email
+ }
+ module "cloudbuild_trigger_frontend" {
+  source       = "./module/cloud_build"
+  project_id   = var.project_id
+  trigger_name = "frontend-trigger"
+  trigger_path = "client/my-app/cloud-build-frontend.yaml"
+  github_owner = "rg2023"
+  github_repo  = "Exchange-Rates"
+  trigger_branch = "^master$"
+  included_files = ["client/**"]
   service_account_email = module.create_sa_cloudbuild.email
  }
 

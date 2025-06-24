@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 function UploadPage() {
   const { baseCurrency } = useParams();
-  const backendUrl = 'http://localhost:8000';
+  const backendUrl = window.VITE_BACKEND_URL;
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {

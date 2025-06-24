@@ -5,7 +5,7 @@ substitutions:
   _REGION: "me-west1"
   _PROJECT_ID: "sandbox-lz-rachelge"
   _BACKEND_URL: unused
-  _SERVICE_ACCOUNT: "tf-cr-cloud-run-frontend@sandbox-lz-rachelge.iam.gserviceaccount.com"
+  # _SERVICE_ACCOUNT: "tf-cr-cloud-run-frontend@sandbox-lz-rachelge.iam.gserviceaccount.com"
 
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -37,6 +37,6 @@ steps:
       - --region=${_REGION}
       - --port=80
       - --platform=managed
-      - --service-account=${_SERVICE_ACCOUNT}
+      # - --service-account=${_SERVICE_ACCOUNT}
 
 

@@ -82,10 +82,10 @@ def save_to_db(baseCurrency: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/ai")
-def ask_vertexai(request: QuestionRequest):
-    try:
-        response = ask_vertex_ai(request.question)
-        return {"response": response}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @app.post("/ai")
+# def ask_vertexai(request: QuestionRequest):
+#     try:
+#         response = ask_vertex_ai(request.question)
+#         return {"response": response}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
