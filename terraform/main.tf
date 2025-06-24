@@ -50,7 +50,7 @@ module "cloud_run_frontend" {
     "user:rachelge-aaaa@sandboxgcp.cloud"
   ]
 }
-
+    service_account_create = true
 }
 module "artifact-registry" {
   source  = "GoogleCloudPlatform/artifact-registry/google"
@@ -158,9 +158,9 @@ module "create_sa_cloudbuild" {
     ]
   }
   iam_sa_roles = {
-    # "projects/${var.project_id}/serviceAccounts/${module.cloud_run_frontend.service_account_email}" = [
-    #   "roles/iam.serviceAccountUser"
-    # ],
+    "projects/${var.project_id}/serviceAccounts/${module.cloud_run_frontend.service_account_email}" = [
+      "roles/iam.serviceAccountUser"
+    ],
     "projects/${var.project_id}/serviceAccounts/${module.cloud_run_backend.service_account_email}" = [
       "roles/iam.serviceAccountUser"
     ]
