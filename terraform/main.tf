@@ -156,7 +156,7 @@ module "cloudbuild_trigger_backend" {
   trigger_name = "backend-trigger"
   trigger_path = "server/cloud-build-server.yaml"
   github_owner = "rg2023"
-  github_repo  = "Project_"
+  github_repo  = "Exchange-Rates"
   trigger_branch = "^master$"
   included_files = ["server/**"]
   service_account_email = module.create_sa_cloudbuild.email
