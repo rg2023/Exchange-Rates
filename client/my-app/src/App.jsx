@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/upload/:baseCurrency" element={<UploadPage />} />
-        <Route path="/upload/:baseCurrency" element={<SaveInDB />} />
+        <Route path="/save/:baseCurrency" element={<SaveInDB />} />
       </Routes>
     </Router>
   );
