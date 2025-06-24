@@ -14,8 +14,8 @@ steps:
     args:
       - -c
       - |
-        _BACKEND_URL=$(gcloud run services describe cloud-run-backend --platform=managed --region=${_REGION} --format='value(status.url)')
-        echo "window.VITE_BACKEND_URL = \"$_BACKEND_URL\";" > client/my-app/public/env.js
+        BACKEND_URL=$(gcloud run services describe cloud-run-backend --platform=managed --region=me-west1 --format="value(status.url)")
+        echo "window.VITE_BACKEND_URL = \"$BACKEND_URL\";" > client/my-app/public/env.js
 
   
   - name: "gcr.io/cloud-builders/docker"
