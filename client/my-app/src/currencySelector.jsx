@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
  
 
 
-
+// window.VITE_BACKEND_URL || 
 function CurrencySelector({ baseCurrency, setBaseCurrency, currencies, setCurrencies }) {
-    const backendUrl = window.VITE_BACKEND_URL;
+    const backendUrl = 'http://localhost:8000';
     useEffect(() => {
         async function fetchData() {
             try {

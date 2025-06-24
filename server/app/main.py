@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 import httpx
 from pathlib import Path
 import json
-from app.utils import upload_file
+from app.utils.storage import upload_file
 from datetime import datetime
 
 
@@ -51,7 +51,7 @@ async def get_exchange_rates(baseCurrency: str):
 
 
 
-app.post("/upload-to-bucket/{baseCurrency}")
+@app.post("/upload-to-bucket/{baseCurrency}")
 def upload_to_bucket(baseCurrency: str):
     if baseCurrency not in cached_exchange_data:
         raise HTTPException(status_code=404, detail="Data not found in memory. Please select a currency first.")
@@ -59,7 +59,8 @@ def upload_to_bucket(baseCurrency: str):
         json_data = json.dumps(cached_exchange_data[baseCurrency], indent=4)
         bucket_name = "bucket_sandbox-lz-rachelge"
         today_str = datetime.now().strftime("%Y-%m-%d")  
-        filename = f"exchange_rates_{baseCurrency}_{today_str}.json
+        filename = f"exchange_rates_{baseCurrency}_{today_str}.json"
+        upload_file(bucket_name, json_data.encode('utf-8'), filename)
         return {"message": f"{filename} uploaded successfully to bucket {bucket_name}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

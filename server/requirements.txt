@@ -1,3 +1,10 @@
 fastapi
 uvicorn
 httpx
+google-cloud-storage
+google-cloud-secret-manager
+google-cloud-aiplatform
+python-multipart
+cloud-sql-python-connector[pymysql]
+sqlalchemy
+pymysql
