@@ -5,7 +5,7 @@ substitutions:
   _REGION: "me-west1"
   _PROJECT_ID: "sandbox-lz-rachelge"
   _BACKEND_URL: unused
-  # _SERVICE_ACCOUNT: "tf-cr-cloud-run-frontend@sandbox-lz-rachelge.iam.gserviceaccount.com"
+  
 
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -14,7 +14,7 @@ steps:
     args:
       - -c
       - |
-        _BACKEND_URL=$(gcloud run services describe cloud-run-server --platform=managed --region=${_REGION} --format='value(status.url)')
+        _BACKEND_URL=$(gcloud run services describe cloud-run-backend --platform=managed --region=${_REGION} --format='value(status.url)')
         echo "window.VITE_BACKEND_URL = \"$_BACKEND_URL\";" > client/my-app/public/env.js
 
   
