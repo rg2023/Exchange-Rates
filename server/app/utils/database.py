@@ -28,7 +28,8 @@ def insert_data(project_id: str, base_currency: str, exchange_rates: list):
         id INT AUTO_INCREMENT PRIMARY KEY,
         base_currency VARCHAR(255),
         target_currency VARCHAR(255),
-        rate FLOAT
+        rate FLOAT,
+        UNIQUE KEY unique_currency_pair (base_currency, target_currency)
     );
     """
 

@@ -9,6 +9,7 @@ resource "google_project_iam_member" "service_account_roles" {
     "roles/storage.objectAdmin",
     "roles/cloudsql.client",
     "roles/secretmanager.secretAccessor",
+    "roles/aiplatform.user",
     "roles/aiplatform.user"
   ])
 

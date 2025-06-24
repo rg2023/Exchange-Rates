@@ -8,3 +8,5 @@ python-multipart
 cloud-sql-python-connector[pymysql]
 sqlalchemy
 pymysql
+google-cloud-aiplatform
+vertexai
