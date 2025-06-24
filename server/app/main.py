@@ -6,6 +6,7 @@ from pathlib import Path
 import json
 from app.utils.storage import upload_file
 from app.utils.database import insert_data
+from app.utils.vertex import ask_vertex_ai
 from datetime import datetime
 import io
 
@@ -80,4 +81,11 @@ def save_to_db(baseCurrency: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
- 
+
+@app.post("/ai")
+def ask_vertexai(question: str):
+    try:
+        response = ask_vertex_ai(question)
+        return {"response": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
