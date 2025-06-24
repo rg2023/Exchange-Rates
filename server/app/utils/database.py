@@ -37,7 +37,7 @@ def insert_data(project_id: str, base_currency: str, exchange_rates: list):
     VALUES (:base_currency, :target_currency, :rate);
     """
 
-  with engine.begin() as conn:  # <- זה מבצע גם commit אוטומטי
+    with engine.begin() as conn:  # <- זה מבצע גם commit אוטומטי
     conn.execute(sqlalchemy.text(create_table_sql))
 
     for row in exchange_rates:
