@@ -5,6 +5,7 @@ import httpx
 from pathlib import Path
 import json
 from app.utils.storage import upload_file
+from app.utils.database import insert_data
 from datetime import datetime
 import io
 
