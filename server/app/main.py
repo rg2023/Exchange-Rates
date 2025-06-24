@@ -75,6 +75,7 @@ def save_to_db(baseCurrency: str):
         raise HTTPException(status_code=404, detail="Data not found in memory. Please select a currency first.")
     try:
         exchange_data = cached_exchange_data[baseCurrency]
+        return exchange_data
         insert_data("sandbox-lz-rachelge", baseCurrency, exchange_data)
         return {"message": "Data saved to database successfully"}
     except Exception as e:
