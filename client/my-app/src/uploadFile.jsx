@@ -12,7 +12,9 @@ function UploadPage() {
         const response = await fetch(`${backendUrl}/upload-to-bucket/${baseCurrency}`, {
           method: 'POST',
         });
+        console.log("🔵🟢");
         const result = await response.json();
+        console.log("🔵🟢", result);
         if (response.ok) {
           setSuccessMessage('📤 הקובץ הועלה ל־GCS בהצלחה!');
         } else {

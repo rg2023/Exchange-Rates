@@ -43,7 +43,6 @@ def insert_data(project_id: str, base_currency: str, exchange_rates: list):
         conn.execute(sqlalchemy.text(create_table_sql))
         print("🟢 Inserting rows...")
         for row in exchange_rates:
-            print(f" 🔵🟢Inserting {row['currency']} with rate {row['rate']}")
             conn.execute(sqlalchemy.text(insert_sql), {
                 "base_currency": base_currency,
                 "target_currency": row["currency"],
