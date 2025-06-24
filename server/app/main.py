@@ -6,7 +6,7 @@ from pathlib import Path
 import json
 from app.utils.storage import upload_file
 from datetime import datetime
-
+import io
 
 app = FastAPI()
 
@@ -60,7 +60,23 @@ def upload_to_bucket(baseCurrency: str):
         bucket_name = "bucket_sandbox-lz-rachelge"
         today_str = datetime.now().strftime("%Y-%m-%d")  
         filename = f"exchange_rates_{baseCurrency}_{today_str}.json"
-        upload_file(bucket_name, json_data.encode('utf-8'), filename)
+        file_stream = io.BytesIO(json_data.encode('utf-8'))
+        upload_file(bucket_name, file_stream, filename)
         return {"message": f"{filename} uploaded successfully to bucket {bucket_name}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+@app.post("/save/{baseCurrency}")
+def save_to_db(baseCurrency: str):
+    if baseCurrency not in cached_exchange_data:
+        raise HTTPException(status_code=404, detail="Data not found in memory. Please select a currency first.")
+    try:
+        exchange_data = cached_exchange_data[baseCurrency]
+        insert_data("sandbox-lz-rachelge", baseCurrency, exchange_data)
+        return {"message": "Data saved to database successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+ 
